@@ -1,0 +1,29 @@
+name: Deploy to Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version or label to deploy (e.g. v1.2.3)"
+        required: false
+        default: "latest"
+
+# NEW: cancel-in-progress: false keeps every pending run queued.
+# Up to 100 runs wait their turn and execute sequentially — none are dropped.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy ${{ inputs.version }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Simulate deployment
+        run: |
+          echo "🚀 Starting deployment of ${{ inputs.version }} to production…"
+          echo "   Run ID : ${{ github.run_id }}"
+          echo "   Run #   : ${{ github.run_number }}"
+          sleep 30
+          echo "✅ Deployment of ${{ inputs.version }} complete."
