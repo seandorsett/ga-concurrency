@@ -12,8 +12,8 @@ on:
 # Up to 100 runs wait their turn and execute sequentially — none are dropped.
 concurrency:
   group: deploy-production
-  cancel-in-progress: false
-  queue: max 
+  cancel-in-progress: true
+  #queue: max 
 
 jobs:
   deploy:
