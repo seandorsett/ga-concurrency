@@ -8,6 +8,10 @@ on:
         required: false
         default: "3"
 
+permissions:
+  actions: write
+  contents: read
+
 jobs:
   # Fan-out: fire multiple deploy workflow runs back-to-back so that the
   # concurrency group in deploy.yml queues them rather than cancelling them.
