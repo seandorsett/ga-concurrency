@@ -1,0 +1,39 @@
+name: Trigger Concurrency Demo
+
+on:
+  workflow_dispatch:
+    inputs:
+      runs:
+        description: "Number of back-to-back deploy runs to trigger (2–5)"
+        required: false
+        default: "3"
+
+jobs:
+  # Fan-out: fire multiple deploy workflow runs back-to-back so that the
+  # concurrency group in deploy.yml queues them rather than cancelling them.
+  trigger:
+    name: Fire ${{ inputs.runs }} deploy runs
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Trigger deploy runs back-to-back
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          RUNS: ${{ inputs.runs }}
+          REF: ${{ github.ref_name }}
+        run: |
+          echo "🔁 Triggering ${RUNS} deploy runs back-to-back…"
+          for i in $(seq 1 "${RUNS}"); do
+            echo "  ➡️  Triggering deploy run #${i} (version=demo-${i})…"
+            gh workflow run deploy.yml \
+              --repo "${REPO}" \
+              --ref "${REF}" \
+              --field version="demo-${i}"
+            # Small pause so GitHub registers each trigger as a distinct run
+            sleep 2
+          done
+          echo ""
+          echo "✅ All ${RUNS} runs triggered."
+          echo "   Open the Actions tab to watch them queue up under the"
+          echo "   'deploy-production' concurrency group — none will be cancelled."
