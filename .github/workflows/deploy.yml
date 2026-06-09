@@ -13,7 +13,7 @@ on:
 concurrency:
   group: deploy-production
   cancel-in-progress: false
-  #queue: max 
+  queue: max 
 
 jobs:
   deploy:
